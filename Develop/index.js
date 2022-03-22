@@ -1,6 +1,7 @@
 // TODO: Include packages needed for this application
 const inquirer = require('inquirer');
-
+const fs = require('fs');
+const generateMarkdown = require("./utils/generateMarkdown"); 
 // TODO: Create an array of questions for user input
 const questions = [
     {
@@ -31,43 +32,72 @@ const questions = [
     },
     {
         type: 'input',
-        name: 'descriptionDetails',
-        message: ('Provide a detailed explanation of the project: (Optional) (Motivation/reason for project, problems it solves, what you learned, etc)'),
+        name: 'usage',
+        message: ('Describe how to use the project, what it does: (Optional)'),
     },
     {
         type: 'input',
         name: 'installation',
         message: 'Provide instructions to install and use the project: (Optional)',
     },
+    // {
+    //     type: 'input',
+    //     name: 'credits',
+    //     message: "Provide the project's collaborators, third-party assets, tutorials, etc: (Optional)",
+    // },
     {
-        type: 'input',
-        name: 'credits',
-        message: "Provide the project's collaborators, third-party assets, tutorials, etc: (Optional)",
-    },
-    {
-        type: 'input',
+        type: 'list',
         name: 'license',
-        message: 'Provide the license for the project: (Optional)',
+        message: 'Provide the license for the project:',
+        choices: ["MIT", "Apache", "GNU", "None"]
     },
-    {
-        type: 'input',
-        name: 'features',
-        message: "Provide a list of the project's features: (Optional)",
-    },
+    // {
+    //     type: 'input',
+    //     name: 'features',
+    //     message: "Provide a list of the project's features: (Optional)",
+    // },
     {
         type: 'input',
         name: 'contribute',
         message: 'Provide information on how to contribute to the project: (Optional)',
+    },
+    {
+        type: 'input',
+        name: 'tests',
+        message: 'Write the command to run test cases for your project (ex: npm run test): (Optional)',
+    },
+    {
+        type: 'input',
+        name: 'username',
+        message: 'Provide your Github username: (Optional)',
+    },
+    {
+        type: 'input',
+        name: 'email',
+        message: 'Provide your email address: (Optional)',
     }
 ];
 
 // TODO: Create a function to write README file
-function writeToFile(fileName, data) {};
+const writeToFile = (fileName, data) => {
+    fs.writeFile(fileName, data, err => {
+        if (err) throw new Error(err);
+        console.log('README created');
+    });
+};
 
 // TODO: Create a function to initialize app
 const init = () => {
-    return inquirer.prompt(questions);
+    inquirer.prompt(questions).then(answers =>{
+        console.log(answers); 
+        //convert into a readme format 
+       const convertedString =  generateMarkdown(answers); 
+       
+       writeToFile('./README.md', convertedString); 
+
+    })
 };
 
 // Function call to initialize app
-init();
+init()
+//    .then(writeToFile);
